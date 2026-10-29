@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nebula Strike - An epic cyberpunk space shooter game with stunning neon visuals, boss battles, and combo system">
+    <title>NEBULA STRIKE — Cyberpunk Space Shooter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <!-- Scanline overlay -->
+        <div class="scanlines"></div>
+        
+        <!-- Canvas -->
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- HUD -->
+        <div id="hud" class="hidden">
+            <div class="hud-top">
+                <div class="hud-left">
+                    <div class="score-container">
+                        <span class="label">SCORE</span>
+                        <span id="score" class="value">0</span>
+                    </div>
+                    <div class="combo-container" id="combo-display" style="opacity: 0">
+                        <span class="combo-text">COMBO</span>
+                        <span id="combo-count" class="combo-value">x2</span>
+                    </div>
+                </div>
+                <div class="hud-center">
+                    <div id="wave-announce" class="wave-announce hidden">
+                        <span class="wave-label">WAVE</span>
+                        <span class="wave-number" id="wave-number">1</span>
+                    </div>
+                    <div id="boss-announce" class="boss-announce hidden">
+                        <span class="boss-warning">⚠ WARNING ⚠</span>
+                        <span class="boss-text">BOSS INCOMING</span>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="wave-container">
+                        <span class="label">WAVE</span>
+                        <span id="wave" class="value">1</span>
+                    </div>
+                    <div class="highscore-container">
+                        <span class="label">HIGH</span>
+                        <span id="highscore" class="value">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hud-bottom">
+                <div class="health-section">
+                    <span class="health-label">HULL</span>
+                    <div class="health-bar-outer">
+                        <div id="health-bar" class="health-bar-inner"></div>
+                        <div class="health-bar-glow"></div>
+                    </div>
+                    <span id="health-text" class="health-text">100</span>
+                </div>
+                <div class="powerup-section">
+                    <div class="powerup-slot" id="powerup-shield" title="Shield">
+                        <div class="powerup-icon">🛡️</div>
+                        <div class="powerup-timer"></div>
+                    </div>
+                    <div class="powerup-slot" id="powerup-multi" title="Multi-Shot">
+                        <div class="powerup-icon">🔱</div>
+                        <div class="powerup-timer"></div>
+                    </div>
+                    <div class="powerup-slot" id="powerup-laser" title="Laser Beam">
+                        <div class="powerup-icon">⚡</div>
+                        <div class="powerup-timer"></div>
+                    </div>
+                    <div class="powerup-slot" id="powerup-speed" title="Speed Boost">
+                        <div class="powerup-icon">🚀</div>
+                        <div class="powerup-timer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <div class="title-container">
+                <h1 class="game-title">
+                    <span class="title-line title-nebula">NEBULA</span>
+                    <span class="title-line title-strike">STRIKE</span>
+                </h1>
+                <p class="subtitle">CYBERPUNK SPACE SHOOTER</p>
+            </div>
+            <div class="menu-container">
+                <button id="start-btn" class="menu-btn primary-btn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">START MISSION</span>
+                </button>
+                <button id="controls-btn" class="menu-btn secondary-btn">
+                    <span class="btn-icon">⌨</span>
+                    <span class="btn-text">CONTROLS</span>
+                </button>
+            </div>
+            <div class="start-info">
+                <p>WASD / Arrow Keys to move • SPACE to shoot • P to pause</p>
+            </div>
+        </div>
+
+        <!-- Controls Screen -->
+        <div id="controls-screen" class="screen hidden">
+            <h2 class="screen-title">CONTROLS</h2>
+            <div class="controls-grid">
+                <div class="control-item">
+                    <div class="key-group">
+                        <span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span>
+                    </div>
+                    <span class="control-desc">Movement</span>
+                </div>
+                <div class="control-item">
+                    <div class="key-group">
+                        <span class="key wide">SPACE</span>
+                    </div>
+                    <span class="control-desc">Fire Weapon</span>
+                </div>
+                <div class="control-item">
+                    <div class="key-group">
+                        <span class="key">P</span>
+                    </div>
+                    <span class="control-desc">Pause Game</span>
+                </div>
+                <div class="control-item">
+                    <div class="key-group">
+                        <span class="key wide">MOUSE</span>
+                    </div>
+                    <span class="control-desc">Aim Direction</span>
+                </div>
+            </div>
+            <button id="back-btn" class="menu-btn secondary-btn">
+                <span class="btn-icon">←</span>
+                <span class="btn-text">BACK</span>
+            </button>
+        </div>
+
+        <!-- Pause Screen -->
+        <div id="pause-screen" class="screen hidden">
+            <h2 class="screen-title glitch" data-text="PAUSED">PAUSED</h2>
+            <button id="resume-btn" class="menu-btn primary-btn">
+                <span class="btn-icon">▶</span>
+                <span class="btn-text">RESUME</span>
+            </button>
+            <button id="quit-btn" class="menu-btn secondary-btn">
+                <span class="btn-icon">✕</span>
+                <span class="btn-text">QUIT TO MENU</span>
+            </button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen hidden">
+            <h2 class="screen-title gameover-title">MISSION FAILED</h2>
+            <div class="stats-container">
+                <div class="stat-row">
+                    <span class="stat-label">FINAL SCORE</span>
+                    <span id="final-score" class="stat-value">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">WAVES SURVIVED</span>
+                    <span id="final-wave" class="stat-value">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">MAX COMBO</span>
+                    <span id="final-combo" class="stat-value">x0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">ENEMIES DESTROYED</span>
+                    <span id="final-kills" class="stat-value">0</span>
+                </div>
+                <div class="stat-row highlight">
+                    <span class="stat-label">HIGH SCORE</span>
+                    <span id="final-highscore" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="gameover-buttons">
+                <button id="retry-btn" class="menu-btn primary-btn">
+                    <span class="btn-icon">↻</span>
+                    <span class="btn-text">RETRY MISSION</span>
+                </button>
+                <button id="menu-btn" class="menu-btn secondary-btn">
+                    <span class="btn-icon">☰</span>
+                    <span class="btn-text">MAIN MENU</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="audio.js"></script>
+    <script src="particles.js"></script>
+    <script src="entities.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
